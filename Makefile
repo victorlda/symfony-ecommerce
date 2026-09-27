@@ -41,3 +41,6 @@ cs-fix:
 > $(EXEC) vendor/bin/php-cs-fixer fix
 
 qa: cs stan test
+
+docs:
+> docker compose exec -T php php bin/console nelmio:apidoc:dump --format=json > docs/openapi.json

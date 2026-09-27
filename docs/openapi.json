@@ -1,0 +1,638 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Symfony E-commerce API",
+        "description": "API REST do e-commerce. Para endpoints protegidos, fa\u00e7a login em /api/login e use o token no bot\u00e3o \"Authorize\".",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autentica\u00e7\u00e3o"
+                ],
+                "summary": "Autentica o usu\u00e1rio e retorna um token JWT",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "victor@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Minha-senha-forte-2026"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inv\u00e1lidas"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Retorna os detalhes de um produto ativo.",
+                "operationId": "get_api_products_show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto n\u00e3o encontrado ou arquivado"
+                    }
+                },
+                "security": []
+            },
+            "put": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Edita nome, pre\u00e7o e descri\u00e7\u00e3o de um produto (somente administradores).",
+                "description": "O SKU e o slug n\u00e3o podem ser alterados.",
+                "operationId": "put_api_products_update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "404": {
+                        "description": "Produto n\u00e3o encontrado"
+                    },
+                    "422": {
+                        "description": "Dados inv\u00e1lidos"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Arquiva um produto, removendo-o do cat\u00e1logo (somente administradores).",
+                "description": "O produto n\u00e3o \u00e9 apagado do banco, para preservar o hist\u00f3rico de pedidos.",
+                "operationId": "delete_api_products_archive",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produto arquivado"
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "404": {
+                        "description": "Produto n\u00e3o encontrado"
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Lista os produtos ativos do cat\u00e1logo, com pagina\u00e7\u00e3o.",
+                "operationId": "get_api_products_list",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "P\u00e1gina de produtos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Par\u00e2metros de pagina\u00e7\u00e3o inv\u00e1lidos"
+                    }
+                },
+                "security": []
+            },
+            "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Cadastra um novo produto (somente administradores).",
+                "operationId": "post_api_products_create",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produto cadastrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "409": {
+                        "description": "SKU j\u00e1 cadastrado"
+                    },
+                    "422": {
+                        "description": "Dados inv\u00e1lidos"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}/restore": {
+            "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Reativa um produto arquivado, devolvendo-o ao cat\u00e1logo (somente administradores).",
+                "operationId": "post_api_products_restore",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto reativado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "404": {
+                        "description": "Produto n\u00e3o encontrado"
+                    }
+                }
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Usu\u00e1rios"
+                ],
+                "summary": "Retorna os dados do usu\u00e1rio autenticado.",
+                "operationId": "get_api_me",
+                "responses": {
+                    "200": {
+                        "description": "Usu\u00e1rio autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token ausente, inv\u00e1lido ou expirado"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "post": {
+                "tags": [
+                    "Usu\u00e1rios"
+                ],
+                "summary": "Cadastra um novo usu\u00e1rio.",
+                "operationId": "post_api_users_register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usu\u00e1rio cadastrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "E-mail j\u00e1 cadastrado"
+                    },
+                    "422": {
+                        "description": "Dados inv\u00e1lidos"
+                    }
+                },
+                "security": []
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateProductRequest": {
+                "properties": {
+                    "sku": {
+                        "type": "string",
+                        "pattern": "[A-Za-z0-9-]+",
+                        "default": "",
+                        "maxLength": 64
+                    },
+                    "name": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 200,
+                        "minLength": 2
+                    },
+                    "priceInCents": {
+                        "type": "integer",
+                        "default": 0,
+                        "maximum": 100000000,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "default": null,
+                        "maxLength": 5000
+                    }
+                },
+                "type": "object"
+            },
+            "ListProductsQuery": {
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "default": 1,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "default": 20,
+                        "maximum": 100,
+                        "minimum": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 200,
+                        "minLength": 2
+                    },
+                    "priceInCents": {
+                        "type": "integer",
+                        "default": 0,
+                        "maximum": 100000000,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "default": null,
+                        "maxLength": 5000
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 180
+                    },
+                    "name": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 120,
+                        "minLength": 2
+                    },
+                    "password": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 4096,
+                        "minLength": 8
+                    }
+                },
+                "type": "object"
+            },
+            "ProductResponse": {
+                "required": [
+                    "id",
+                    "sku",
+                    "name",
+                    "slug",
+                    "priceInCents",
+                    "active",
+                    "createdAt",
+                    "updatedAt"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "01a0e4a1-a692-7c53-9cc0-add061fe64e8"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "CAM-001"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Camiseta B\u00e1sica Preta"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "camiseta-basica-preta-cam-001"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Camiseta 100% algod\u00e3o",
+                        "nullable": true
+                    },
+                    "priceInCents": {
+                        "description": "Pre\u00e7o em centavos",
+                        "type": "integer",
+                        "example": 4990
+                    },
+                    "active": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "required": [
+                    "page",
+                    "limit",
+                    "total",
+                    "totalPages"
+                ],
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "ProductListResponse": {
+                "required": [
+                    "data",
+                    "meta"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductResponse"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponse": {
+                "required": [
+                    "id",
+                    "email",
+                    "name",
+                    "roles",
+                    "createdAt"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "01a0e48a-ca48-7ed4-bcc9-e6654d42873d"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "victor@example.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Victor"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "ROLE_USER"
+                        ]
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        {
+            "Bearer": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Produtos"
+        },
+        {
+            "name": "Usu\u00e1rios"
+        },
+        {
+            "name": "Autentica\u00e7\u00e3o",
+            "description": "Autentica\u00e7\u00e3o"
+        }
+    ]
+}

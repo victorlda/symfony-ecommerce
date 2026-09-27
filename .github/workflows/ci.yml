@@ -59,6 +59,11 @@ jobs:
         run: |
           php bin/console cache:warmup --env=dev
           vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+      
+      - name: Documentação OpenAPI atualizada
+        run: |
+          php bin/console nelmio:apidoc:dump --format=json > /tmp/openapi.json
+          diff -u ../docs/openapi.json /tmp/openapi.json
 
       - name: Preparar ambiente de testes
         run: |
