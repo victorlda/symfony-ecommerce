@@ -30,16 +30,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    private ?string $password = null;
+    private string $password;
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
-    public function __construct(string $email, string $name)
+    public function __construct(string $email, string $name, string $hashedPassword)
     {
+        $email = mb_strtolower(trim($email));
+
+        if ('' === $email) {
+            throw new \InvalidArgumentException('O e-mail não pode ser vazio.');
+        }
+
         $this->id = Uuid::v7();
-        $this->email = mb_strtolower(trim($email));
+        $this->email = $email;
         $this->name = trim($name);
+        $this->password = $hashedPassword;
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -60,6 +67,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
+        \assert('' !== $this->email, 'Usuário sem e-mail.');
+
         return $this->email;
     }
 
@@ -74,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = array_values(array_unique([...$this->roles, 'ROLE_ADMIN']));
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }

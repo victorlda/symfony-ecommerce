@@ -25,7 +25,7 @@ final readonly class PromoteAdminCommand
         $user = $this->users->findOneByEmail($email);
 
         if (null === $user) {
-            $io->error(sprintf('Usuário "%s" não encontrado.', $email));
+            $io->error(\sprintf('Usuário "%s" não encontrado.', $email));
 
             return Command::FAILURE;
         }
@@ -33,7 +33,7 @@ final readonly class PromoteAdminCommand
         $user->promoteToAdmin();
         $this->users->save($user);
 
-        $io->success(sprintf('%s agora é administrador.', $user->getEmail()));
+        $io->success(\sprintf('%s agora é administrador.', $user->getEmail()));
 
         return Command::SUCCESS;
     }

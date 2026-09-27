@@ -10,6 +10,6 @@ final class ProductNotFound extends \DomainException
 {
     public function __construct(Uuid $id)
     {
-        parent::__construct(sprintf('Produto "%s" não encontrado.', $id->toRfc4122()));
+        parent::__construct(\sprintf('Produto "%s" não encontrado.', $id->toRfc4122()));
     }
 }

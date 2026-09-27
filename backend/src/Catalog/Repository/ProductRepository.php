@@ -46,7 +46,7 @@ class ProductRepository extends ServiceEntityRepository
 
         return [
             'items' => array_values(iterator_to_array($paginator)),
-            'total' => count($paginator),
+            'total' => \count($paginator),
         ];
     }
 }

@@ -8,6 +8,6 @@ final class EmailAlreadyInUse extends \DomainException
 {
     public function __construct(string $email)
     {
-        parent::__construct(sprintf('O e-mail "%s" já está em uso.', $email));
+        parent::__construct(\sprintf('O e-mail "%s" já está em uso.', $email));
     }
 }

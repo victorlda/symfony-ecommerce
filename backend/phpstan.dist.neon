@@ -1,0 +1,12 @@
+parameters:
+    level: 8
+    paths:
+        - src/
+        - tests/
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+    ignoreErrors:
+        # Chamado internamente pelo framework, o PHPStan não enxerga o uso.
+        -
+            identifier: method.unused
+            path: src/Kernel.php

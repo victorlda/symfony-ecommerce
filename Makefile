@@ -23,3 +23,21 @@ console:
 
 jwt:
 > $(EXEC) php bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+test-db:
+> $(EXEC) php bin/console --env=test doctrine:database:create --if-not-exists
+> $(EXEC) php bin/console --env=test doctrine:migrations:migrate --no-interaction
+
+test:
+> $(EXEC) vendor/bin/phpunit
+
+stan:
+> $(EXEC) vendor/bin/phpstan analyse --memory-limit=1G
+
+cs:
+> $(EXEC) vendor/bin/php-cs-fixer fix --dry-run --diff
+
+cs-fix:
+> $(EXEC) vendor/bin/php-cs-fixer fix
+
+qa: cs stan test
