@@ -1,0 +1,45 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Symfony E-commerce API
+            description: API REST do e-commerce. Para endpoints protegidos, faça login em /api/login e use o token no botão "Authorize".
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+        security:
+            - Bearer: []
+        paths:
+            /api/login:
+                post:
+                    tags: [Autenticação]
+                    summary: Autentica o usuário e retorna um token JWT
+                    security: []
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [email, password]
+                                    properties:
+                                        email: { type: string, format: email, example: victor@example.com }
+                                        password: { type: string, format: password, example: Minha-senha-forte-2026 }
+                    responses:
+                        '200':
+                            description: Login realizado
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            token: { type: string }
+                        '401':
+                            description: Credenciais inválidas
+    areas:
+        default:
+            path_patterns:
+                - ^/api(?!/doc)

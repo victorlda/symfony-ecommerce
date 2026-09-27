@@ -29,3 +29,4 @@ phpstan.neon
 
 /.php-cs-fixer.cache
 /.phpunit.cache/
+/public/bundles/
