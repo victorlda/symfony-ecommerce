@@ -108,4 +108,31 @@ class Product
     {
         return $this->updatedAt;
     }
+
+    public function update(string $name, int $priceInCents, ?string $description): void
+    {
+        if ($priceInCents <= 0) {
+            throw new \InvalidArgumentException('O preço deve ser maior que zero.');
+        }
+
+        $this->name = trim($name);
+        $this->priceInCents = $priceInCents;
+        $this->description = $description;
+        $this->touch();
+    }
+
+    public function archive(): void
+    {
+        if (!$this->active) {
+            return;
+        }
+
+        $this->active = false;
+        $this->touch();
+    }
+
+    private function touch(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
 }
