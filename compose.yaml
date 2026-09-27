@@ -1,0 +1,39 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/frankenphp/Dockerfile
+    environment:
+      SERVER_NAME: ":80"
+      DATABASE_URL: "postgresql://app:app@database:5432/app?serverVersion=18&charset=utf8"
+      COMPOSER_HOME: /tmp/composer
+    volumes:
+      - ./backend:/app
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "8000:80"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    volumes:
+      - db_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:
