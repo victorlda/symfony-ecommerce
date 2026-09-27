@@ -20,3 +20,6 @@ composer:
 
 console:
 > $(EXEC) php bin/console $(c)
+
+jwt:
+> $(EXEC) php bin/console lexik:jwt:generate-keypair --skip-if-exists

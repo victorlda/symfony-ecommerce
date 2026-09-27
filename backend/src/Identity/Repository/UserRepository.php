@@ -7,11 +7,12 @@ namespace App\Identity\Repository;
 use App\Identity\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -27,5 +28,10 @@ class UserRepository extends ServiceEntityRepository
     public function findOneByEmail(string $email): ?User
     {
         return $this->findOneBy(['email' => mb_strtolower(trim($email))]);
+    }
+
+    public function loadUserByIdentifier(string $identifier): ?User
+    {
+        return $this->findOneByEmail($identifier);
     }
 }
