@@ -44,3 +44,5 @@ qa: cs stan test
 
 docs:
 > docker compose exec -T php php bin/console nelmio:apidoc:dump --format=json > docs/openapi.json
+
+.PHONY: up down logs sh composer console jwt test-db test stan cs cs-fix qa docs

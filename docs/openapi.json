@@ -61,6 +61,86 @@
                 "security": []
             }
         },
+        "/api/admin/products": {
+            "get": {
+                "tags": [
+                    "Produtos (admin)"
+                ],
+                "summary": "Lista todos os produtos, incluindo os arquivados (somente administradores).",
+                "description": "Permite filtrar por status e buscar por parte do nome ou do SKU.",
+                "operationId": "get_api_admin_products_list",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "all",
+                            "enum": [
+                                "all",
+                                "active",
+                                "archived"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "maxLength": 100
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "P\u00e1gina de produtos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "422": {
+                        "description": "Par\u00e2metros inv\u00e1lidos"
+                    }
+                }
+            }
+        },
         "/api/products/{id}": {
             "get": {
                 "tags": [
@@ -379,6 +459,38 @@
     },
     "components": {
         "schemas": {
+            "AdminListProductsQuery": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "default": "all",
+                        "enum": [
+                            "all",
+                            "active",
+                            "archived"
+                        ]
+                    },
+                    "q": {
+                        "type": "string",
+                        "nullable": true,
+                        "default": null,
+                        "maxLength": 100
+                    },
+                    "page": {
+                        "type": "integer",
+                        "default": 1,
+                        "minimum": 0,
+                        "exclusiveMinimum": true
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "default": 20,
+                        "maximum": 100,
+                        "minimum": 1
+                    }
+                },
+                "type": "object"
+            },
             "CreateProductRequest": {
                 "properties": {
                     "sku": {
@@ -624,6 +736,9 @@
         }
     ],
     "tags": [
+        {
+            "name": "Produtos (admin)"
+        },
         {
             "name": "Produtos"
         },
