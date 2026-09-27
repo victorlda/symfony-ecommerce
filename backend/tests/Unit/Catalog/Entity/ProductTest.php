@@ -58,4 +58,14 @@ final class ProductTest extends TestCase
         self::assertFalse($product->isActive());
         self::assertSame($updatedAt, $product->getUpdatedAt());
     }
+
+    public function testRestoreReactivatesArchivedProduct(): void
+    {
+        $product = new Product('CAM-001', 'Camiseta', 'camiseta-cam-001', 4990);
+        $product->archive();
+
+        $product->restore();
+
+        self::assertTrue($product->isActive());
+    }
 }

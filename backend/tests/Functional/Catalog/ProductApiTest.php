@@ -72,4 +72,32 @@ final class ProductApiTest extends ApiTestCase
         self::assertIsArray($meta);
         self::assertSame(0, $meta['total']);
     }
+
+    public function testArchivedProductCanBeRestored(): void
+    {
+        $token = $this->adminToken();
+        $this->requestJson('POST', '/api/products', self::PRODUCT, $token);
+        $id = $this->responseData()['id'];
+        self::assertIsString($id);
+        $this->requestJson('DELETE', '/api/products/'.$id, token: $token);
+
+        $this->requestJson('POST', '/api/products/'.$id.'/restore', token: $token);
+        self::assertResponseIsSuccessful();
+        self::assertTrue($this->responseData()['active']);
+
+        $this->requestJson('GET', '/api/products/'.$id);
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testRegularUserCannotRestoreProduct(): void
+    {
+        $adminToken = $this->adminToken();
+        $this->requestJson('POST', '/api/products', self::PRODUCT, $adminToken);
+        $id = $this->responseData()['id'];
+        self::assertIsString($id);
+
+        $this->requestJson('POST', '/api/products/'.$id.'/restore', token: $this->userToken());
+
+        self::assertResponseStatusCodeSame(403);
+    }
 }

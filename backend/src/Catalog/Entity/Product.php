@@ -131,6 +131,16 @@ class Product
         $this->touch();
     }
 
+    public function restore(): void
+    {
+        if ($this->active) {
+            return;
+        }
+
+        $this->active = true;
+        $this->touch();
+    }
+
     private function touch(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
