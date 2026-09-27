@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Identity\Controller;
 
 use App\Identity\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Shared\Controller\ApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-final class MeController extends AbstractController
+final class MeController extends ApiController
 {
     #[Route('/api/me', name: 'api_me', methods: ['GET'], format: 'json')]
     public function __invoke(#[CurrentUser] User $user): JsonResponse

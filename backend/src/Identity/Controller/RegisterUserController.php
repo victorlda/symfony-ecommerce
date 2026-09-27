@@ -7,14 +7,14 @@ namespace App\Identity\Controller;
 use App\Identity\Application\EmailAlreadyInUse;
 use App\Identity\Application\RegisterUser;
 use App\Identity\Controller\Request\RegisterUserRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Shared\Controller\ApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class RegisterUserController extends AbstractController
+final class RegisterUserController extends ApiController
 {
     public function __construct(
         private readonly RegisterUser $registerUser,

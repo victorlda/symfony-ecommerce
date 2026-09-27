@@ -1,0 +1,4 @@
+framework:
+    serializer:
+        default_context:
+            json_encode_options: !php/const JSON_UNESCAPED_UNICODE
