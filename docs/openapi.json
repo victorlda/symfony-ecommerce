@@ -394,6 +394,22 @@
                 }
             }
         },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autentica\u00e7\u00e3o"
+                ],
+                "summary": "Encerra a sess\u00e3o, revogando o refresh token e removendo o cookie.",
+                "description": "O token de acesso atual continua v\u00e1lido at\u00e9 expirar (no m\u00e1ximo 15 minutos), por isso o cliente deve descart\u00e1-lo.",
+                "operationId": "post_api_auth_logout",
+                "responses": {
+                    "204": {
+                        "description": "Sess\u00e3o encerrada"
+                    }
+                },
+                "security": []
+            }
+        },
         "/api/me": {
             "get": {
                 "tags": [
@@ -416,6 +432,37 @@
                         "description": "Token ausente, inv\u00e1lido ou expirado"
                     }
                 }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Autentica\u00e7\u00e3o"
+                ],
+                "summary": "Renova o token de acesso usando o cookie refresh_token.",
+                "description": "O refresh token \u00e9 rotacionado a cada uso: o anterior deixa de valer e um novo cookie \u00e9 enviado.\nReapresentar um token j\u00e1 usado encerra a sess\u00e3o inteira.",
+                "operationId": "post_api_auth_refresh",
+                "responses": {
+                    "200": {
+                        "description": "Novo token de acesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Refresh token ausente, inv\u00e1lido, expirado ou revogado"
+                    }
+                },
+                "security": []
             }
         },
         "/api/users": {
@@ -743,11 +790,10 @@
             "name": "Produtos"
         },
         {
-            "name": "Usu\u00e1rios"
+            "name": "Autentica\u00e7\u00e3o"
         },
         {
-            "name": "Autentica\u00e7\u00e3o",
-            "description": "Autentica\u00e7\u00e3o"
+            "name": "Usu\u00e1rios"
         }
     ]
 }
