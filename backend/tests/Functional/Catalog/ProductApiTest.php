@@ -100,4 +100,11 @@ final class ProductApiTest extends ApiTestCase
 
         self::assertResponseStatusCodeSame(403);
     }
+
+    public function testRejectsInvalidPagination(): void
+    {
+        $this->requestJson('GET', '/api/products?limit=1000');
+
+        self::assertResponseStatusCodeSame(422);
+    }
 }
