@@ -33,6 +33,23 @@ services:
       timeout: 5s
       retries: 10
 
+  frontend:
+    image: node:24-slim
+    working_dir: /app
+    user: "1000:1000"
+    ulimits:
+      core: 0
+    command: sh -c "npm install && npm run dev"
+    environment:
+      npm_config_cache: /tmp/.npm
+    volumes:
+      - ./frontend:/app
+      - ./docs:/docs:ro
+    ports:
+      - "5173:5173"
+    depends_on:
+      - php
+
 volumes:
   db_data:
   caddy_data:

@@ -1,0 +1,4 @@
+
+# Core dumps gerados quando um processo trava
+core
+core.[0-9]*
