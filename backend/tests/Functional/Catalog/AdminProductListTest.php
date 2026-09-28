@@ -69,6 +69,18 @@ final class AdminProductListTest extends ApiTestCase
         self::assertResponseStatusCodeSame(422);
     }
 
+    public function testAdminCanSeeArchivedProductDetail(): void
+    {
+        $token = $this->adminToken();
+        $id = $this->createProduct($token, 'adm-003', 'Produto Arquivado');
+        $this->requestJson('DELETE', '/api/products/'.$id, token: $token);
+
+        $this->requestJson('GET', '/api/admin/products/'.$id, token: $token);
+
+        self::assertResponseIsSuccessful();
+        self::assertFalse($this->responseData()['active']);
+    }
+
     private function createProduct(string $token, string $sku, string $name): string
     {
         $this->requestJson('POST', '/api/products', [

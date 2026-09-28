@@ -141,6 +141,47 @@
                 }
             }
         },
+        "/api/admin/products/{id}": {
+            "get": {
+                "tags": [
+                    "Produtos (admin)"
+                ],
+                "summary": "Retorna os detalhes de um produto, inclusive arquivado (somente administradores).",
+                "operationId": "get_api_admin_products_show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "N\u00e3o autenticado"
+                    },
+                    "403": {
+                        "description": "Sem permiss\u00e3o de administrador"
+                    },
+                    "404": {
+                        "description": "Produto n\u00e3o encontrado"
+                    }
+                }
+            }
+        },
         "/api/products/{id}": {
             "get": {
                 "tags": [

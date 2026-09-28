@@ -2,9 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/api/client'
 import { unwrap } from '@/api/problem'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
-const formatPrice = (cents: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
+import { formatPrice } from '@/lib/format'
 
 export function CatalogPage() {
   const { data, isPending, isError } = useQuery({
