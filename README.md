@@ -24,6 +24,10 @@ A especificação OpenAPI fica em [`docs/openapi.json`](docs/openapi.json) e é 
 - Documentação OpenAPI (NelmioApiDocBundle)
 - PHPUnit, PHPStan e PHP CS Fixer
 - Docker Compose e GitHub Actions
+- React 19 + TypeScript + Vite
+- Tailwind CSS 4 + shadcn/ui
+- TanStack Query + React Router
+- Cliente HTTP tipado gerado a partir do OpenAPI (openapi-typescript + openapi-fetch)
 
 ## Como rodar
 
@@ -37,3 +41,7 @@ make qa
 ```
 
 A API fica disponível em http://localhost:8000.
+
+O frontend fica disponível em http://localhost:5173.
+
+Ao alterar um endpoint, rode `make types` para atualizar a especificação OpenAPI e os tipos TypeScript do frontend.
