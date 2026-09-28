@@ -1,24 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/api/client'
+import { unwrap } from '@/api/problem'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const formatPrice = (cents: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
 
-export default function App() {
+export function CatalogPage() {
   const { data, isPending, isError } = useQuery({
     queryKey: ['products', { page: 1 }],
-    queryFn: async () => {
-      const { data, error } = await api.GET('/api/products', {
-        params: { query: { page: 1, limit: 20 } },
-      })
-      if (error) throw error
-      return data
-    },
+    queryFn: () => unwrap(api.GET('/api/products', { params: { query: { page: 1, limit: 20 } } })),
   })
 
   return (
-    <main className="mx-auto max-w-5xl p-6">
+    <>
       <h1 className="mb-6 text-3xl font-bold">Catálogo</h1>
 
       {isPending && <p className="text-muted-foreground">Carregando produtos...</p>}
@@ -39,6 +34,6 @@ export default function App() {
           ))}
         </div>
       )}
-    </main>
+    </>
   )
 }
