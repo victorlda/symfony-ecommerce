@@ -45,3 +45,7 @@ A API fica disponível em http://localhost:8000.
 O frontend fica disponível em http://localhost:5173.
 
 Ao alterar um endpoint, rode `make types` para atualizar a especificação OpenAPI e os tipos TypeScript do frontend.
+
+## Roadmap
+
+Veja o planejamento das próximas etapas em [docs/ROADMAP.md](docs/ROADMAP.md).
