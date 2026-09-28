@@ -73,3 +73,37 @@ jobs:
 
       - name: Testes (PHPUnit)
         run: vendor/bin/phpunit
+
+  frontend:
+    name: Frontend (Node 24)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Auditoria de vulnerabilidades
+        run: npm audit --audit-level=high
+
+      - name: Tipos da API sincronizados com o OpenAPI
+        run: |
+          npm run api:types
+          git diff --exit-code src/api/schema.d.ts
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Tipos e build de produção
+        run: npm run build

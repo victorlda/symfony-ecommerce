@@ -57,3 +57,13 @@ front-logs:
 > docker compose logs -f frontend
 
 .PHONY: npm npx front-logs
+
+# Regenera o OpenAPI a partir do backend e os tipos TypeScript a partir do OpenAPI
+types: docs
+> docker compose exec frontend npm run api:types
+
+front-qa:
+> docker compose exec frontend npm run lint
+> docker compose exec frontend npm run build
+
+.PHONY: types front-qa
